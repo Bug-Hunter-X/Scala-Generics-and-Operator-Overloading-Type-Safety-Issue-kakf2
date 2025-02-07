@@ -1,0 +1,34 @@
+```scala
+trait Addable[T] {
+  def add(x: T, y: T): T
+}
+
+object AddableInstances {
+  implicit val intAddable = new Addable[Int] {
+    override def add(x: Int, y: Int): Int = x + y 
+  }
+  implicit val stringAddable = new Addable[String] {
+    override def add(x: String, y: String): String = x + y
+  }
+}
+
+class MyClass[T](val value: T)(implicit val adder: Addable[T]) {
+  def myMethod(other: MyClass[T]): T = {
+    adder.add(value, other.value) 
+  }
+}
+
+object Main extends App {
+  implicit val intAddable = AddableInstances.intAddable
+  implicit val stringAddable = AddableInstances.stringAddable
+  val num1 = new MyClass[Int](10)
+  val num2 = new MyClass[Int](20)
+  val sum = num1.myMethod(num2)
+  println(sum) // Output: 30
+
+  val str1 = new MyClass[String]("Hello")
+  val str2 = new MyClass[String](" World")
+  val strSum = str1.myMethod(str2)
+  println(strSum) // Output: Hello World
+}
+```
